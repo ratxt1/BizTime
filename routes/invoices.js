@@ -45,7 +45,6 @@ router.get("/:id", async function(req, res, next) {
     );
 
     invoice.company = companyResult.rows[0]
-    console.log(invoice)
    
 
     return res.json({invoice : invoice});
@@ -60,6 +59,7 @@ router.get("/:id", async function(req, res, next) {
   {invoice: {id, comp_code, amt, paid, add_date, paid_date}}
 */
 router.post("/", async function(req, res, next) {
+  debugger;
   try {
     const { comp_code, amt } = req.body;
 
@@ -137,5 +137,3 @@ router.delete("/:id", async function(req, res, next) {
 
 module.exports = router;
 
-
-module.exports = router;

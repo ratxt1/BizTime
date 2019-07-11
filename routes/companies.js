@@ -20,7 +20,7 @@ router.get("/", async function(req, res, next) {
 
 /* 
   GET /companies:code return JSON of a single company 
-  {company: {code, name, description}}
+  {company: {code, name, description, invoices: [id, ...]}}
 */
 router.get("/:code", async function(req, res, next) {
   try {
@@ -35,11 +35,13 @@ router.get("/:code", async function(req, res, next) {
       WHERE comp_code = $1`, [code]
     );
     const company = compResult.rows[0];
-    company.invoices = invoiceResult.rows[0]
     
     if (company === undefined) {
       throw new ExpressError("Company Not Found", 404);
     }
+    
+    company.invoices = invoiceResult.rows.map(inv => inv.id);
+
 
     return res.json({company: company});
   } catch (err) {
