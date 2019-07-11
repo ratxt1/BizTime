@@ -25,11 +25,17 @@ router.get("/", async function(req, res, next) {
 router.get("/:code", async function(req, res, next) {
   try {
     const code = req.params.code;
-    const result = await db.query(
+    const compResult = await db.query(
       `SELECT code, name, description FROM companies
       WHERE code = $1`, [code]
     );
-    const company = result.rows[0];
+    
+    const invoiceResult = await db.query(
+      `SELECT id, amt, paid, add_date, paid_date, comp_code FROM invoices
+      WHERE comp_code = $1`, [code]
+    );
+    const company = compResult.rows[0];
+    company.invoices = invoiceResult.rows[0]
     
     if (company === undefined) {
       throw new ExpressError("Company Not Found", 404);
@@ -98,14 +104,17 @@ router.delete("/:code", async function(req, res, next) {
         "DELETE FROM companies WHERE code = $1 RETURNING code",
         [code]
     );
+
     if (result.rowCount === 0) {
       throw new ExpressError("Company Not Found", 404);
     }
+
     return res.json({status: "deleted"});
   } catch (err) {
     return next(err);
   }
 });
+
 
 
 module.exports = router;

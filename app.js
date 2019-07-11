@@ -15,6 +15,8 @@ app.use(express.json());
 
 
 app.use("/companies", companyRoutes);
+app.use("/invoices", invoiceRoutes);
+
 
 /** 404 handler */
 
