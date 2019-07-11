@@ -2,6 +2,7 @@ const express = require("express");
 const router = new express.Router();
 const  db = require("../db")
 const ExpressError = require("../expressError") // error
+const slugify = require('slugify')
 
 /* 
   GET /companies return JSON of all companies 
@@ -39,7 +40,7 @@ router.get("/:code", async function(req, res, next) {
     if (company === undefined) {
       throw new ExpressError("Company Not Found", 404);
     }
-    
+
     company.invoices = invoiceResult.rows.map(inv => inv.id);
 
 
@@ -78,7 +79,7 @@ router.post("/", async function(req, res, next) {
 router.put("/:code", async function(req, res, next) {
   try {
     const { name, description} = req.body;
-    const code = req.params.code;
+    const code = slugify(req.params.code);
 
     const result = await db.query(
       `UPDATE companies SET name=$1, description=$2
